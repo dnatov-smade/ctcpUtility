@@ -7,15 +7,16 @@
 #include <arpa/inet.h>
 
 
-void start_tcp_server(int port, void (*call)(int server_fd))
+int  start_tcp_server(int port, void (*call)(int server_fd))
 {
     int server_fd;
     struct sockaddr_in addr;
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd < 0) {
+    if (server_fd < 0)
+    {
         perror("socket");
-        return;
+        return 1;
     }
 
     int opt = 1;
@@ -26,49 +27,56 @@ void start_tcp_server(int port, void (*call)(int server_fd))
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
 
-    if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+    if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    {
         perror("bind");
         close(server_fd);
-        return;
+        return 1;
     }
 
-    if (listen(server_fd, 3) < 0) {
+    if (listen(server_fd, 3) < 0)
+    {
         perror("listen");
         close(server_fd);
-        return;
+        return 1;
     }
 
     call(server_fd);
     close(server_fd);
+    return 0;
 }
 
-void start_tcp_client(const char *ip, int port, const char *message)
+int start_tcp_client(const char *ip, int port, const char *message)
 {
     int sock;
     struct sockaddr_in server;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) {
+    if (sock < 0)
+    {
         perror("socket");
-        return;
+        return 1;
     }
 
     memset(&server, 0, sizeof(server));
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
 
-    if (inet_pton(AF_INET, ip, &server.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, ip, &server.sin_addr) <= 0)
+     {
         perror("inet_pton");
         close(sock);
-        return;
+        return 1;
     }
 
-    if (connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0) {
+    if (connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0)
+    {
         perror("connect");
         close(sock);
-        return;
+        return 1;
     }
 
     write(sock, message, strlen(message));
     close(sock);
+    return 0;
 }

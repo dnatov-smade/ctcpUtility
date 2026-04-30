@@ -46,7 +46,7 @@ int  start_tcp_server(int port, void (*call)(int server_fd))
     return 0;
 }
 
-int start_tcp_client(const char *ip, int port, const char *message)
+int start_tcp_request(const char *ip, int port, const char *message, int(*res)(int sock))
 {
     int sock;
     struct sockaddr_in server;
@@ -77,6 +77,12 @@ int start_tcp_client(const char *ip, int port, const char *message)
     }
 
     write(sock, message, strlen(message));
+    if(res!=NULL)
+    {
+        int ret = res(sock);
+        close(sock);
+     return ret;
+    }
     close(sock);
     return 0;
 }

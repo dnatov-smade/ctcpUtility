@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 
 
-int  start_tcp_server(int port, void (*call)(int server_fd))
+int  start_tcp_server(int port, callback function)
 {
     int server_fd;
     struct sockaddr_in addr;
@@ -41,12 +41,12 @@ int  start_tcp_server(int port, void (*call)(int server_fd))
         return 1;
     }
 
-    call(server_fd);
+    function(server_fd);
     close(server_fd);
     return 0;
 }
 
-int start_tcp_request(const char *ip, int port, const char *message, int(*res)(int sock))
+int start_tcp_request(const char *ip, int port, const char *message, response res)
 {
     int sock;
     struct sockaddr_in server;

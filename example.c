@@ -41,7 +41,7 @@ void *work(void *args)
   return NULL;
 }
 
-void callback(int server_fd)
+void call(int server_fd)
 {
   pthread_t threads[1000];
   int counter=0;
@@ -67,6 +67,6 @@ int main(void)
 {
   setvbuf(stdout, NULL, _IONBF, 0);
   setlocale(LC_ALL, "");
-  start_tcp_server(8080, callback);
+  start_tcp_server(8080, call);
   return 0;
 }

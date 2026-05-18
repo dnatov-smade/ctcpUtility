@@ -2,7 +2,10 @@
 #define UTILS_H
 
 
-int start_tcp_server(int port, void(*call)(int server_fd));
+typedef void (*callback)(int server_fd);
+typedef int (*response)(int sock);
+
+int start_tcp_server(int port, callback func);
 
 
 
